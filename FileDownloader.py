@@ -505,6 +505,36 @@ def westrockFileDownload(fileA, filePath):
             re.search(r'\.DXF$', fileName) != None) or (re.search(r'\.DWG$', fileName) != None):
         print("pdf")
 
+        f = open(os.path.join(filePath, fileName), 'w+b')
+        f.write(base64.b64decode(fileA['contentBytes']))
+        f.close()
+
+        revision = "Unknown"
+        partNumber = ""
+        if (re.search(r'.*(R\d)', fileName) != None):
+            revision = re.search(r'.*(R\d)', fileName).group(1)
+            partNumberSplit = fileName.split(" ")
+            partNumber = partNumberSplit[0]
+        else:
+            filenameSplit = fileName.split(".")
+            partNumber = filenameSplit[0]
+
+        filenameSplit = fileName.split(".")
+        # Assigning filenameNew, value depending on moreThenOneSheet
+        filenameNew = str(partNumber) + " Rev " + str(revision) + "." + filenameSplit[1]
+
+        # Save the file
+        newpathFolder = filePath + "\\" + str(partNumber)
+        # Create a folder for the part if that folder does not exist
+        if not os.path.exists(newpathFolder):
+            os.makedirs(newpathFolder)
+        # Cut the file to the folder
+        if not os.path.exists(newpathFolder + "\\" + filenameNew):
+            os.rename(os.path.join(filePath, fileName), (newpathFolder + "\\" + filenameNew))
+        else:
+            os.remove(os.path.join(filePath, fileName))
+        print("File:" + filenameNew + " has been saved")
+
         f = open(os.path.abspath(quoteFileLocationCustomer + fileName), 'w+b')
         f.write(base64.b64decode(fileA['contentBytes']))
         f.close()
