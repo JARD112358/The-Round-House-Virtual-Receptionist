@@ -128,6 +128,8 @@ def emailCategoriser():
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "pharos")
                 elif re.search(r'(.*)@timberwolf-uk\.com', emailAddress) != None and df_Customer_Regex['Customer'][ind] == "TIMBERWOLF":
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "timberwolf")
+                elif re.search(r'(.*)@westrock\.com', emailAddress) != None and df_Customer_Regex['Customer'][ind] == "WESTROCK":
+                    attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "westrock")
         elif prediction == 2 and followUpFlag['flagStatus'] == 'notFlagged':
 
             # Categorise the email as a PO and flags it
@@ -213,7 +215,7 @@ def attachmentQuoteSaver(message, quoteFileLocationCustomer, customer):
             f = open(os.path.abspath(quoteFileLocationCustomer + attachmentName), 'w+b')
             f.write(base64.b64decode(attachment['contentBytes']))
             f.close()
-            fd.bakerPerkinsDownload(attachment, quoteFileLocationCustomer)
+            fd.bakerPerkinsFileDownload(attachment, quoteFileLocationCustomer)
     elif customer == "bradmanlake":
         #Create a dataframe of the rev number of the part
         df = pd.DataFrame(columns=['Part_Number', 'Revision'])
@@ -234,7 +236,7 @@ def attachmentQuoteSaver(message, quoteFileLocationCustomer, customer):
                             f = open(os.path.abspath(quoteFileLocation + attachmentName), 'w+b')
                             f.write(base64.b64decode(attachment['contentBytes']))
                             f.close()
-                            df = fd.revTableCreator(quoteFileLocation + attachmentName)
+                            df = fd.bradmanLakeRevTableCreator(quoteFileLocation + attachmentName)
         #Save each attachment
         for attachment in jsonData['value']:
             #for tetsing only
@@ -244,7 +246,7 @@ def attachmentQuoteSaver(message, quoteFileLocationCustomer, customer):
             f.close()
             fd.bradmanLakeFileDownload(attachment, quoteFileLocationCustomer, df)
     elif customer == "fords":
-        attachmentDrawingList = fd.partNumbersReturn(jsonData['value'])
+        attachmentDrawingList = fd.fordsPartNumbersReturn(jsonData['value'])
         for attachment in jsonData['value']:
             # for testing only.
             quoteFileLocationCustomer = "C:\\\\Users\\josha\\PycharmProjects\\The Virtual Receptonist\\Test Storage"
@@ -252,7 +254,7 @@ def attachmentQuoteSaver(message, quoteFileLocationCustomer, customer):
             f = open(os.path.abspath(quoteFileLocationCustomer + attachmentName), 'w+b')
             f.write(base64.b64decode(attachment['contentBytes']))
             f.close()
-            fd.fordsDownload(attachment, quoteFileLocationCustomer, attachmentDrawingList)
+            fd.fordsFileDownload(attachment, quoteFileLocationCustomer, attachmentDrawingList)
     elif customer == "harrod":
         for attachment in jsonData['value']:
             # for testing only.
@@ -261,7 +263,7 @@ def attachmentQuoteSaver(message, quoteFileLocationCustomer, customer):
             f = open(os.path.abspath(quoteFileLocationCustomer + attachmentName), 'w+b')
             f.write(base64.b64decode(attachment['contentBytes']))
             f.close()
-            fd.harrodDownload(attachment, quoteFileLocationCustomer)
+            fd.harrodFileDownload(attachment, quoteFileLocationCustomer)
     elif customer == "hydra":
         for attachment in jsonData['value']:
             # for testing only.
@@ -270,7 +272,7 @@ def attachmentQuoteSaver(message, quoteFileLocationCustomer, customer):
             f = open(os.path.abspath(quoteFileLocationCustomer + attachmentName), 'w+b')
             f.write(base64.b64decode(attachment['contentBytes']))
             f.close()
-            fd.hydraDownload(attachment, quoteFileLocationCustomer)
+            fd.hydraFileDownload(attachment, quoteFileLocationCustomer)
     elif customer == "pharos":
         for attachment in jsonData['value']:
             # for testing only.
@@ -279,17 +281,24 @@ def attachmentQuoteSaver(message, quoteFileLocationCustomer, customer):
             f = open(os.path.abspath(quoteFileLocationCustomer + attachmentName), 'w+b')
             f.write(base64.b64decode(attachment['contentBytes']))
             f.close()
-            fd.pharosDownload(attachment, quoteFileLocationCustomer)
+            fd.pharosFileDownload(attachment, quoteFileLocationCustomer)
     elif customer == "timberwolf":
         for attachment in jsonData['value']:
-            print(attachment['name'])
             # for testing only.
             quoteFileLocationCustomer = "C:\\\\Users\\josha\\PycharmProjects\\The Virtual Receptonist\\Test Storage"
             attachmentName = attachment['name']
             f = open(os.path.abspath(quoteFileLocationCustomer + attachmentName), 'w+b')
             f.write(base64.b64decode(attachment['contentBytes']))
             f.close()
-            fd.timberwolfDownload(attachment, quoteFileLocationCustomer)
+            fd.timberwolfFileDownload(attachment, quoteFileLocationCustomer)
+    elif customer == "westrock":
+        print("westrock email identified")
+        for attachment in jsonData['value']:
+            print(attachment['name'])
+            # for testing only.
+            quoteFileLocationCustomer = "C:\\\\Users\\josha\\PycharmProjects\\The Virtual Receptonist\\Test Storage\\"
+            fd.westrockFileDownload(attachment, quoteFileLocationCustomer)
+
 
 def attachmentPOSaver(message, poRegex, poFileLocationCustomer, poFileLocationReader):
     graph_api_endpoint = 'https://graph.microsoft.com/v1.0{0}'
