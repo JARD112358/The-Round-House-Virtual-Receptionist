@@ -18,7 +18,7 @@ class Email:
         self.original_message = original_message
         self.original_label = original_label
         self.original_subject = original_subject
-        # For numbered label: 0 = NCR, 1 = Quote, 2 = PO, 3 = Other
+        # For the variable "numbered_label": 0 = NCR, 1 = Quote, 2 = PO, 3 = Other
         # For the remaining labels 0 = False, 1 = True
         if original_label == "NCR / Complaint received":
             self.numbered_label = 0

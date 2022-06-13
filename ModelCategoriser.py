@@ -33,7 +33,7 @@ def vectorize_sequences(sequences, dimension=10000):
     return results
 
 
-# A method to create a model that can give an intial clasification of the email
+# A method to create a model that can give an initial classification of the email
 def initialCategoriser(epochA, epochB):
     # Clears any previous models
     k.clear_session()

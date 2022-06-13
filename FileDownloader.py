@@ -6,6 +6,7 @@ import pandas as pd
 import pdfplumber
 
 
+# method to download Adande email attachments
 def adandeFileDownload(fileA, filePath):
     fileName = fileA['name']
     # Checks to see if file is a zip
@@ -50,6 +51,7 @@ def adandeFileDownload(fileA, filePath):
         print("All the Files have been saved for: " + str(fileName))
 
 
+# method to download Baker Perkins email attachments
 def bakerPerkinsFileDownload(fileA, filePath):
     fileName = fileA['name']
     moreThenOneSheet = False
@@ -107,6 +109,7 @@ def bakerPerkinsFileDownload(fileA, filePath):
         print("File:" + filenameNew + " has been saved")
 
 
+# method to download Bradman Lake email attachments
 def bradmanLakeFileDownload(fileA, filePath, dfRev):
     if dfRev.empty:
         dfRev.append({'Part_Number': "Unknown", 'Revision': "Unknown"}, ignore_index=True)
@@ -196,6 +199,7 @@ def bradmanLakeFileDownload(fileA, filePath, dfRev):
         print("File:" + filenameNew + " has been saved")
 
 
+# Method to retrieve the rev for BradmanLake parts
 def bradmanLakeRevTableCreator(pdfSavedFiled):
     df = pd.DataFrame(columns=['Part_Number', 'Revision'])
     lineCounter = 1
@@ -223,6 +227,7 @@ def bradmanLakeRevTableCreator(pdfSavedFiled):
     return df
 
 
+# method to download Fords email attachments
 def fordsFileDownload(fileA, filePath, drawingList):
     fileName = fileA['name']
     # Checks to see if file is a pdf or dxf or swg
@@ -263,6 +268,7 @@ def fordsFileDownload(fileA, filePath, drawingList):
                 print("File:" + filenameNew + " has been saved")
 
 
+# Method to locate the PartNumbers for ford's parts
 def fordsPartNumbersReturn(attachments):
     returnList = []
     for attachment in attachments:
@@ -273,6 +279,7 @@ def fordsPartNumbersReturn(attachments):
     return returnList
 
 
+# method to download Harrod email attachments
 def harrodFileDownload(fileA, filePath):
     fileName = fileA['name']
     # Checks to see if file is a pdf or dxf or swg
@@ -302,6 +309,7 @@ def harrodFileDownload(fileA, filePath):
         print("File:" + filenameNew + " has been saved")
 
 
+# method to download Hydra email attachments
 def hydraFileDownload(fileA, filePath):
     fileName = fileA['name']
     # Checks to see if file is a pdf or dxf or swg
@@ -331,6 +339,7 @@ def hydraFileDownload(fileA, filePath):
         print("File:" + filenameNew + " has been saved")
 
 
+# method to download Pharos email attachments
 def pharosFileDownload(fileA, filePath):
     fileName = fileA['name']
     # Checks to see if file is a pdf or dxf or dwg
@@ -370,6 +379,7 @@ def pharosFileDownload(fileA, filePath):
         print("File:" + filenameNew + " has been saved")
 
 
+# method to download Timberwolf email attachments
 def timberwolfFileDownload(fileA, filePath):
     fileName = fileA['name']
     filenameNew = ""
@@ -407,6 +417,7 @@ def timberwolfFileDownload(fileA, filePath):
         print("File:" + filenameNew + " has been saved")
 
 
+# method to download Westrock email attachments
 def westrockFileDownload(fileA, filePath):
     fileName = fileA['name']
     quoteFileLocationCustomer = "C:\\\\Users\\josha\\PycharmProjects\\The Virtual Receptonist\\Test Storage\\"
