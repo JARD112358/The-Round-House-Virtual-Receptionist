@@ -21,6 +21,10 @@ import re
 import MicrosoftGraphConnector
 import FileDownloader as fd
 
+global outputList
+
+outputList = []
+# Method to categorise emails
 def emailCategoriser():
     # Download the starting data for the
     EmailDownloaderServer.downloadStartingData()
@@ -96,39 +100,49 @@ def emailCategoriser():
             emailAddress = "No email address was found"
             if re.search(r"^Fw:", message['subject']):
                 for ind in df_Customer_Regex.index:
-                # if it does, loop through customer regex and compare to body preview
-                    if  re.search(df_Customer_Regex['EmailRegex'][ind], message['bodyPreview']) != None:
-                        #if a match is found set email to that email address
+                    # if it does, loop through customer regex and compare to body preview
+                    if re.search(df_Customer_Regex['EmailRegex'][ind], message['bodyPreview']) != None:
+                        # if a match is found set email to that email address
                         emailAddress = re.search(df_Customer_Regex['EmailRegex'][ind], message['bodyPreview']).group(0)
                         break
                     elif re.search(df_Customer_Regex['EmailRegex'][ind], message['body']['content']) != None:
-                        #if a match is found set email to that email address
-                        emailAddress = re.search(df_Customer_Regex['EmailRegex'][ind], message['body']['content']).group(0)
+                        # if a match is found set email to that email address
+                        emailAddress = re.search(df_Customer_Regex['EmailRegex'][ind],
+                                                 message['body']['content']).group(0)
                         break
             else:
-                #otherise set emailAddress to email address
+                # otherise set emailAddress to email address
                 emailAddress = message['from']['emailAddress']['address']
             x = MicrosoftGraphConnector.patchRequest(request_url, headers, bodyData)
             for ind in df_Customer_Regex.index:
-                if re.search(r'(.*)@adande\.com$', emailAddress) != None and df_Customer_Regex['Customer'][ind] == "ADANDE":
+                if re.search(r'(.*)@adande\.com$', emailAddress) != None and df_Customer_Regex['Customer'][
+                    ind] == "ADANDE":
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "adande")
-                elif re.search(r'(.*)@bakerperkins\.com$', emailAddress) != None and df_Customer_Regex['Customer'][ind] == "BAKER PERKINS":
+                elif re.search(r'(.*)@bakerperkins\.com$', emailAddress) != None and df_Customer_Regex['Customer'][
+                    ind] == "BAKER PERKINS":
                     # Processes the Purchase Order
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "bakerperkins")
-                elif re.search(r'(.*)@bradmanlake.com$', emailAddress) != None and df_Customer_Regex['Customer'][ind] == "BRADMAN-LAKE":
+                elif re.search(r'(.*)@bradmanlake.com$', emailAddress) != None and df_Customer_Regex['Customer'][
+                    ind] == "BRADMAN-LAKE":
                     # Processes the Purchase Order
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "bradmanlake")
-                elif re.search(r'(.*)@fordsps.com$', emailAddress) != None and df_Customer_Regex['Customer'][ind] == "FORDS":
+                elif re.search(r'(.*)@fordsps.com$', emailAddress) != None and df_Customer_Regex['Customer'][
+                    ind] == "FORDS":
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "fords")
-                elif re.search(r'(.*)@harrod\.uk\.com', emailAddress) != None and df_Customer_Regex['Customer'][ind] == "HARROD":
+                elif re.search(r'(.*)@harrod\.uk\.com', emailAddress) != None and df_Customer_Regex['Customer'][
+                    ind] == "HARROD":
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "harrod")
-                elif re.search(r'(.*)@nov\.com', emailAddress) != None and df_Customer_Regex['Customer'][ind] == "HYDRA RIG":
+                elif re.search(r'(.*)@nov\.com', emailAddress) != None and df_Customer_Regex['Customer'][
+                    ind] == "HYDRA RIG":
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "hydra")
-                elif re.search(r'(.*)@pharosmarine\.com', emailAddress) != None and df_Customer_Regex['Customer'][ind] == "PHAROS":
+                elif re.search(r'(.*)@pharosmarine\.com', emailAddress) != None and df_Customer_Regex['Customer'][
+                    ind] == "PHAROS":
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "pharos")
-                elif re.search(r'(.*)@timberwolf-uk\.com', emailAddress) != None and df_Customer_Regex['Customer'][ind] == "TIMBERWOLF":
+                elif re.search(r'(.*)@timberwolf-uk\.com', emailAddress) != None and df_Customer_Regex['Customer'][
+                    ind] == "TIMBERWOLF":
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "timberwolf")
-                elif re.search(r'(.*)@westrock\.com', emailAddress) != None and df_Customer_Regex['Customer'][ind] == "WESTROCK":
+                elif re.search(r'(.*)@westrock\.com', emailAddress) != None and df_Customer_Regex['Customer'][
+                    ind] == "WESTROCK":
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "westrock")
         elif prediction == 2 and followUpFlag['flagStatus'] == 'notFlagged':
 
@@ -154,17 +168,19 @@ def emailCategoriser():
             # Checks to see if the customer is available for processing
             emailAddress = message['from']['emailAddress']['address']
             for ind in df_Customer_Regex.index:
+                x = MicrosoftGraphConnector.patchRequest(request_url, headers, bodyData)
                 pattern = r"" + df_Customer_Regex['EmailRegex'][ind] + r""
                 if re.search(pattern, emailAddress) != None:
                     # Processes the Purchase Order
-                    x = MicrosoftGraphConnector.patchRequest(request_url, headers, bodyData)
-                    # if message['attachments'] != None:
-                    #attachmentPOSaver(message, df_Customer_Regex['PORegex'][ind],
-                                          #df_Customer_Regex['POFileLocationCustomer'][ind],
-                                          #df_Customer_Regex['POFileLocationReader'][ind])
+                    if message['hasAttachments'] == True:
+                        attachmentPOSaver(message, df_Customer_Regex['PORegex'][ind],
+                                          df_Customer_Regex['POFileLocationCustomer'][ind],
+                                          df_Customer_Regex['POFileLocationReader'][ind])
         i = i - 1
     print("Emails have been sorted")
 
+
+# Method to process a quote email
 def attachmentQuoteSaver(message, quoteFileLocationCustomer, customer):
     graph_api_endpoint = 'https://graph.microsoft.com/v1.0{0}'
     df = pd.read_csv("main/authenticationDetails.csv", header=0)
@@ -186,7 +202,7 @@ def attachmentQuoteSaver(message, quoteFileLocationCustomer, customer):
     response = MicrosoftGraphConnector.getRequest(request_url, headers)
     if response.ok:
         resposnseJson = response.json()
-    #Check if the email has attachments aand retreieve them
+    # Check if the email has attachments aand retreieve them
     if resposnseJson["hasAttachments"] == True:
         emailStringRequest = '/users/' + str(chosen_email) + '/messages/' + message['id'] + '/attachments'
         request_url = graph_api_endpoint.format(emailStringRequest)
@@ -195,7 +211,7 @@ def attachmentQuoteSaver(message, quoteFileLocationCustomer, customer):
         exit()
     jsonData = json.loads(response.content)
 
-    #download the file
+    # download the file
     if customer == "adande":
         # Save each attachment
         for attachment in jsonData['value']:
@@ -217,7 +233,7 @@ def attachmentQuoteSaver(message, quoteFileLocationCustomer, customer):
             f.close()
             fd.bakerPerkinsFileDownload(attachment, quoteFileLocationCustomer)
     elif customer == "bradmanlake":
-        #Create a dataframe of the rev number of the part
+        # Create a dataframe of the rev number of the part
         df = pd.DataFrame(columns=['Part_Number', 'Revision'])
         boolAttachedQuote = False
         for attachment in jsonData['value']:
@@ -237,9 +253,9 @@ def attachmentQuoteSaver(message, quoteFileLocationCustomer, customer):
                             f.write(base64.b64decode(attachment['contentBytes']))
                             f.close()
                             df = fd.bradmanLakeRevTableCreator(quoteFileLocation + attachmentName)
-        #Save each attachment
+        # Save each attachment
         for attachment in jsonData['value']:
-            #for tetsing only
+            # for tetsing only
             quoteFileLocationCustomer = "C:\\\\Users\\josha\\PycharmProjects\\The Virtual Receptonist\\Test Storage"
             f = open(os.path.abspath(quoteFileLocationCustomer + attachmentName), 'w+b')
             f.write(base64.b64decode(attachment['contentBytes']))
@@ -300,6 +316,7 @@ def attachmentQuoteSaver(message, quoteFileLocationCustomer, customer):
             fd.westrockFileDownload(attachment, quoteFileLocationCustomer)
 
 
+# Method to process a PO email
 def attachmentPOSaver(message, poRegex, poFileLocationCustomer, poFileLocationReader):
     graph_api_endpoint = 'https://graph.microsoft.com/v1.0{0}'
 

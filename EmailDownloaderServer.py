@@ -17,6 +17,7 @@ import pandas as pd
 import MicrosoftGraphConnector
 
 
+# Method to download data for the Models
 def downloadStartingData():
     # data to create a microsoft GRAPH api GET request
     graph_api_endpoint = 'https://graph.microsoft.com/v1.0{0}'
@@ -72,7 +73,7 @@ def downloadStartingData():
             writer.writerow([messageCategoryChosen, messageSubject[i], messageBodyEdited])
             i = i + 1
 
-
+# Method to download emails for categorisation
 def download():
     # Creates a microsft graph api request
     graph_api_endpoint = 'https://graph.microsoft.com/v1.0{0}'
@@ -82,7 +83,7 @@ def download():
         if df.loc[i, "Label"] == 'email':
             chosen_email = df.loc[i, "Value"]
             emailStringRequest = '/users/' + str(
-                chosen_email) + '/messages?$top=250&$select=id,categories,subject,body,flag,from,bodyPreview'
+                chosen_email) + '/messages?$top=250&$select=id,categories,subject,body,flag,from,bodyPreview,hasAttachments'
     request_url = graph_api_endpoint.format(emailStringRequest)
     headers = {
         'User-Agent': 'python_tutorial/1.0',
