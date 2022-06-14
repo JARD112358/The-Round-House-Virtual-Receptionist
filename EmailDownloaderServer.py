@@ -16,9 +16,9 @@ import re
 import pandas as pd
 import MicrosoftGraphConnector
 
-
 # Method to download data for the Models
 def downloadStartingData():
+
     # data to create a microsoft GRAPH api GET request
     graph_api_endpoint = 'https://graph.microsoft.com/v1.0{0}'
 

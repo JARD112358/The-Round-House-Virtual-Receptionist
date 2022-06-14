@@ -24,8 +24,11 @@ import FileDownloader as fd
 global outputList
 
 outputList = []
+
+
 # Method to categorise emails
 def emailCategoriser():
+    outputList.append(5)
     # Download the starting data for the
     EmailDownloaderServer.downloadStartingData()
     messages = EmailDownloaderServer.download()
@@ -78,6 +81,9 @@ def emailCategoriser():
 
             # Only run this code to categorise all emails
             x = MicrosoftGraphConnector.patchRequest(request_url, headers, bodyData)
+            outputList.append(
+                "The email with the subject: \"" + str(
+                    message['subject']) + "\" has been categorised and flagged as a NCR / Complaint received")
         elif (prediction == 1 and followUpFlag['flagStatus'] == 'notFlagged'):
             # Categorise the email as a Quote and flags it
             graph_api_endpoint = 'https://graph.microsoft.com/v1.0{0}'
@@ -111,39 +117,106 @@ def emailCategoriser():
                                                  message['body']['content']).group(0)
                         break
             else:
-                # otherise set emailAddress to email address
+                # otherwise set emailAddress to email address
                 emailAddress = message['from']['emailAddress']['address']
             x = MicrosoftGraphConnector.patchRequest(request_url, headers, bodyData)
+            customerFound = False
             for ind in df_Customer_Regex.index:
                 if re.search(r'(.*)@adande\.com$', emailAddress) != None and df_Customer_Regex['Customer'][
                     ind] == "ADANDE":
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "adande")
+                    outputList.append(
+                        "The email with the subject: \"" + str(
+                            message['subject']) + "\" has been categorised and flagged as a " +
+                        df_Customer_Regex['Customer'][
+                            ind] + " \'Quotation requested\'. Attachments have been saved")
+                    customerFound = True
+                    break
                 elif re.search(r'(.*)@bakerperkins\.com$', emailAddress) != None and df_Customer_Regex['Customer'][
                     ind] == "BAKER PERKINS":
                     # Processes the Purchase Order
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "bakerperkins")
+                    outputList.append(
+                        "The email with the subject: \"" + str(
+                            message['subject']) + "\" has been categorised and flagged as a " +
+                        df_Customer_Regex['Customer'][
+                            ind] + " \'Quotation requested\'. Attachments have been saved")
+                    customerFound = True
+                    break
                 elif re.search(r'(.*)@bradmanlake.com$', emailAddress) != None and df_Customer_Regex['Customer'][
                     ind] == "BRADMAN-LAKE":
                     # Processes the Purchase Order
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "bradmanlake")
+                    outputList.append(
+                        "The email with the subject: \"" + str(
+                            message['subject']) + "\" has been categorised and flagged as a " +
+                        df_Customer_Regex['Customer'][
+                            ind] + " \'Quotation requested\'. Attachments have been saved")
+                    customerFound = True
+                    break
                 elif re.search(r'(.*)@fordsps.com$', emailAddress) != None and df_Customer_Regex['Customer'][
                     ind] == "FORDS":
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "fords")
+                    outputList.append(
+                        "The email with the subject: \"" + str(
+                            message['subject']) + "\" has been categorised and flagged as a " +
+                        df_Customer_Regex['Customer'][
+                            ind] + " \'Quotation requested\'. Attachments have been saved")
+                    customerFound = True
+                    break
                 elif re.search(r'(.*)@harrod\.uk\.com', emailAddress) != None and df_Customer_Regex['Customer'][
                     ind] == "HARROD":
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "harrod")
+                    outputList.append(
+                        "The email with the subject: \"" + str(
+                            message['subject']) + "\" has been categorised and flagged as a " +
+                        df_Customer_Regex['Customer'][
+                            ind] + " \'Quotation requested\'. Attachments have been saved")
+                    customerFound = True
+                    break
                 elif re.search(r'(.*)@nov\.com', emailAddress) != None and df_Customer_Regex['Customer'][
                     ind] == "HYDRA RIG":
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "hydra")
+                    outputList.append(
+                        "The email with the subject: \"" + str(
+                            message['subject']) + "\" has been categorised and flagged as a " +
+                        df_Customer_Regex['Customer'][
+                            ind] + " \'Quotation requested\'. Attachments have been saved")
+                    customerFound = True
+                    break
                 elif re.search(r'(.*)@pharosmarine\.com', emailAddress) != None and df_Customer_Regex['Customer'][
                     ind] == "PHAROS":
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "pharos")
+                    outputList.append(
+                        "The email with the subject: \"" + str(
+                            message['subject']) + "\" has been categorised and flagged as a " +
+                        df_Customer_Regex['Customer'][
+                            ind] + " \'Quotation requested\'. Attachments have been saved")
+                    customerFound = True
+                    break
                 elif re.search(r'(.*)@timberwolf-uk\.com', emailAddress) != None and df_Customer_Regex['Customer'][
                     ind] == "TIMBERWOLF":
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "timberwolf")
+                    outputList.append(
+                        "The email with the subject: \"" + str(
+                            message['subject']) + "\" has been categorised and flagged as a " +
+                        df_Customer_Regex['Customer'][
+                            ind] + " \'Quotation requested\'. Attachments have been saved")
+                    customerFound = True
+                    break
                 elif re.search(r'(.*)@westrock\.com', emailAddress) != None and df_Customer_Regex['Customer'][
                     ind] == "WESTROCK":
                     attachmentQuoteSaver(message, df_Customer_Regex['DrawingFileLocation'][ind], "westrock")
+                    outputList.append(
+                        "The email with the subject: \"" + str(
+                            message['subject']) + "\" has been categorised and flagged as a " +
+                        df_Customer_Regex['Customer'][
+                            ind] + " \'Quotation requested\'. Attachments have been saved")
+                    customerFound = True
+                    break
+            if customerFound == False:
+                outputList.append("The email with the subject: \"" + str(message[
+                                                                         'subject']) + "\" has been categorised and flagged as a \'Quotation requested\'. Please Process. ")
         elif prediction == 2 and followUpFlag['flagStatus'] == 'notFlagged':
 
             # Categorise the email as a PO and flags it
@@ -167,17 +240,42 @@ def emailCategoriser():
 
             # Checks to see if the customer is available for processing
             emailAddress = message['from']['emailAddress']['address']
+            x = MicrosoftGraphConnector.patchRequest(request_url, headers, bodyData)
             for ind in df_Customer_Regex.index:
-                x = MicrosoftGraphConnector.patchRequest(request_url, headers, bodyData)
                 pattern = r"" + df_Customer_Regex['EmailRegex'][ind] + r""
                 if re.search(pattern, emailAddress) != None:
                     # Processes the Purchase Order
                     if message['hasAttachments'] == True:
+                        # attachmentPOSaver(message, df_Customer_Regex['PORegex'][ind],
+                        # df_Customer_Regex['POFileLocationCustomer'][ind],
+                        # df_Customer_Regex['POFileLocationReader'][ind])
+
                         attachmentPOSaver(message, df_Customer_Regex['PORegex'][ind],
-                                          df_Customer_Regex['POFileLocationCustomer'][ind],
-                                          df_Customer_Regex['POFileLocationReader'][ind])
+                                          "C:\\\\Users\\josha\\PycharmProjects\\The Virtual Receptonist\\Test Storage",
+                                          "C:\\\\Users\\josha\\PycharmProjects\\The Virtual Receptonist\\Test Storage")
+                        outputList.append(
+                            "The email with the subject: \"" + str(
+                                message['subject']) + "\" has been categorised and flagged as a " +
+                            df_Customer_Regex['Customer'][
+                                ind] + " \'Purchase Order received\'. Attachments have been saved and added to the electronic sales order on MIE Trak")
+                        break
+                    else:
+                        outputList.append(
+                            "The email with the subject: \"" + str(
+                                message['subject']) + "\" has been categorised and flagged as a " +
+                            df_Customer_Regex['Customer'][
+                                ind] + " \'Purchase Order received\'. However it has no attachment, please review.")
+            outputList.append(
+                "The email with the subject: \"" + str(
+                    message[
+                        'subject']) + "\" has been categorised and flagged as a \'Purchase Order received\'. Please process it.")
+        """else:
+            outputList.append(
+                "The email with the subject: \"" + str(message['subject']) + "\" has not been categorised.")"""
         i = i - 1
     print("Emails have been sorted")
+    for line in outputList:
+        print(line)
 
 
 # Method to process a quote email
